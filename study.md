@@ -226,3 +226,307 @@ public class Finalmain {
 }
 
 ```
+
+# Interface
+## 타입변환과 다형성
+### **다형성** 이란?
+다형성은 하나의 타입에 대입되는 객체에 따라 실행 결과가 
+다양한 형태로 나오는 것을 말한다
+
+즉 상속관계에 있는 클래스에서 상위클래스가 동일한 메세지로 하위클래스를 다르게
+동작 시키고자하는 객체지향의 원리이다.
+
+최근엔 상속보다도 인터페이스를 활용 하여 다형성을 구현하는데
+그이유는 인터페이스를 상속하게 되면 인터페이스의 추상 메서드를 반드시
+구현 해야 함으로 물리적으로 다형성을 100% 보장하기 때문일 것이다
+
+
+```
+package kr.poly;
+public interface class Animal{ 
+	// Dog, Cat -->eat()
+	public void eat(); // 추상메서드=>불완전한메서드,장애메서드
+
+}
+```
+```
+package kr.poly;
+public class Cat implements Animal{
+  
+	@Override
+	public void eat() {
+		System.out.println("고양이 처럼 먹다.");
+	}  
+}
+```
+```
+
+package kr.poly;
+public class Dog implements Animal{ 
+
+ 
+  public Dog() {
+	  super();//new Animal();
+  }
+	@Override
+	public void eat() {
+		System.out.println("개처럼 먹다.");
+	}   
+}
+```
+```
+
+import kr.tpc.Animal;
+import kr.tpc.Cat;
+import kr.tpc.Dog;
+public class TPC20 {
+	public static void main(String[] args) {
+     // Animal 부모클래스를 사용하지 않음
+	 Dog d=new Dog();
+	 d.eat(); // ? -> 개처럼먹다.
+
+	 Cat c=new Cat();
+	 c.eat();
+	
+	 // 동일한 메세지로 서로 다른걸 구현
+	 // Dog.class, Cat.class
+	 Animal ani=new Dog(); // upcasting(자동형변환)
+	 ani.eat(); // ? -> 개처럼먹다.
+	 
+	 ani=new Cat();
+	 ani.eat(); // ? -> 고양이 처럼먹다.
+	 //ani.night();
+	}
+}
+```
+위의 예시를 보면 **Animal** 이라는 인터페이스를 통해 다른 동작을 하는
+하위 객체인 **Cat** 과 **Dog**을 같은 타입으로서 쓸 수 있다
+
+```
+import kr.tpc.*;
+public class TPC24 {
+	public static void main(String[] args) {
+      // 2. 다형성 배열
+	  // Dog, Cat 저장할 배열을 생성하시오?		
+      Animal[] ani=new Animal[2];
+      ani[0]=new Dog();
+      ani[1]=new Cat();
+      }
+      }
+```
+서로다른 객체를 인터페이스를 활용 함으로써 하나의 배열안에 넣어서 쓸 수 있다
+```
+>>> TV.java
+package polymorphism;
+ 
+public interface Rmocon {
+   void powerOn() ;
+   void powerOff();
+   void volumeUp();
+   void volumeDown();
+}
+
+>>> SamsunTV.java
+package polymorphism;
+ 
+public class SamsungTV implements Remocon {
+ 
+  public void powerOn() {
+    System.out.println("SamsungTV.....전원 켠다.");
+  }
+ 
+  public void powerOff() {
+    System.out.println("SamsungTV.....전원 끈다.");
+  }
+ 
+  public void volumeUp() {
+    System.out.println("SamsungTV.....소리 올린다.");
+  }
+ 
+  public void volumeDown() {
+    System.out.println("SamsungTV.....소리 내린다.");
+  }
+}
+
+>>> LgTV.java
+package polymorphism;
+ 
+public class LgTV implements Remocon {
+ 
+  public void powerOn() {
+    System.out.println("LgTV.....전원 켠다.");
+  }
+ 
+  public void powerOff() {
+    System.out.println("LgTV.....전원 끈다.");
+  }
+ 
+  public void volumeUp() {
+    System.out.println("LgTV.....소리 올린다.");
+  }
+ 
+  public void volumeDown() {
+    System.out.println("LgTV.....소리 내린다.");
+  }
+ 
+}
+
+>>>TVUser.java
+package polymorphism;
+ 
+public class TVUser {
+ 
+  public static void main(String[] args) {
+    Remocon remocon = new SamsungTV();
+    tv.powerOn();
+    tv.powerOff();
+    tv.volumeUp();
+    tv.volumeDown();
+ 
+    Remocon remocon2 = new LgTV();
+    tv2.powerOn();
+    tv2.powerOff();
+    tv2.volumeUp();
+    tv2.volumeDown();
+  }
+}
+ 
+- TVUser 클래스는 Remocon 인터페이스를 통해 각 LgTV, SamsungTV가 어떻게 구현이 되어있는지 몰라도 
+사용 할 수 있다
+```
+
+## 다형성을 이용한 프로그래밍의 예
+
+### 1. JDBC
+- JDBC란 자바프로그램이 데이터베이스와 연결되어 데이터를 주고 받을 수 있도록 해주는 프로그래밍 인터페이스이다
+- 자바에서 JDBC프로그래밍을 하기위해선 각 DB의 벤더(Oracle, MariaDB ...)들이 제공해주는 통일된 클래스가 있어야한다
+만일 그렇지 않다면 벤더별로 CRUD의 동작법이 다르므로 자바개발자가 각DB의 동작방법을 알아야한다 => 즉 불가능하다는 이야기!!
+- 즉 인터페이스로 각 클래스가 **구현** 할 **역할**을 알려주고 실제 구현은 각 벤더사에게 맡긴다면 개발자는 각 DB의 설계를 알지
+못하더라도 DB를 통한 프로그래임이 가능하다!! 
+
+![img](https://t1.daumcdn.net/cfile/tistory/99CE49365AAE548609)
+
+출처 : http://lupin204.tistory.com/49
+
+
+### 2.bbs
+
+```
+package com.study.model;
+
+import java.util.List;
+import java.util.Map;
+
+public interface BbsService {
+  List<BbsDTO> list(Map map);
+  int total(Map map);
+  void upViewcnt(int bbsno);
+  BbsDTO read(int bbsno);
+  int create(BbsDTO dto);
+  int passCheck(Map map);
+  int update(BbsDTO dto);
+  int delete(int bbsno);
+  BbsDTO readReply(int bbsno);
+  void upAnsnum(Map map);
+  int createReply(BbsDTO dto);
+  
+}
+
+```
+```
+package com.study.model;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+@Service("com.study.model.BbsServiceImpl")
+public class BbsServiceImpl implements BbsService {
+  @Autowired
+  private BbsMapper mapper;
+  
+  public List<BbsDTO> list(Map map) {
+    
+    return mapper.list(map);
+  }
+  @Override
+  public int total(Map map) {
+    
+    return mapper.total(map);
+  }
+  @Override
+  public void upViewcnt(int bbsno) {
+    
+    mapper.upViewcnt(bbsno);
+  }....
+```
+
+```
+public class BbsController {
+//  @Autowired
+//  private BbsDAO dao; //마이바티스없이할때
+  
+  @Autowired
+  @Qualifier("com.study.model.BbsServiceImpl") //BbsServiceImpl @Service에 객체생성할때 지정된이름
+  private BbsService dao;
+  
+  @GetMapping("/bbs/reply/{bbsno}")
+  
+  public String reply(@PathVariable int bbsno, Model model) {
+    model.addAttribute("dto", dao.readReply(bbsno));    
+    return "/reply";
+  }
+  @PostMapping("/bbs/reply")
+  public String reply(BbsDTO dto) {
+    Map map = new HashMap();
+    
+    map.put("grpno",dto.getGrpno());
+    map.put("ansnum",dto.getAnsnum());
+    dao.upAnsnum(map);
+    
+    if(dao.createReply(dto) == 1) {//dao.createReply(dto)
+      return "redirect:list";
+    }else {
+      return "error";
+    }
+  }...
+```
+- 위와 갘이 프로그래밍을 하였을때
+만일 쓰고 있는 DB가 바뀐다고 하더라도 BbsService의 역할은 똑같으므로
+DB에따라 구현만(BbsServiceImpl)다시 해주면 된다
+
+## default메소드
+인터페이스가 default키워드로 선언되면 메소드가 구현될 수 있다. 또한 이를 구현하는 클래스는 default메소드를 오버라이딩 할 수 있다.
+```
+    public interface Calculator {
+        public int plus(int i, int j);
+        public int multiple(int i, int j);
+        default int exec(int i, int j){      //default로 선언함으로 메소드를 구현할 수 있다.
+            return i + j;
+        }
+    }
+
+    //Calculator인터페이스를 구현한 MyCalculator클래스
+    public class MyCalculator implements Calculator {
+
+        @Override
+        public int plus(int i, int j) {
+            return i + j;
+        }
+
+        @Override
+        public int multiple(int i, int j) {
+            return i * j;
+        }
+    }
+
+    public class MyCalculatorExam {
+        public static void main(String[] args){
+            Calculator cal = new MyCalculator();
+            int value = cal.exec(5, 10);
+            System.out.println(value);
+        }
+    }
+    ```
+인터페이스가 변경이 되면, 인터페이스를 구현하는 모든 클래스들이 해당 메소드를 구현해야 하는 문제가 있다. 이런 문제를 해결하기 위하여 인터페이스에 메소드를 구현해 놓을 수 있도록 하였다.
