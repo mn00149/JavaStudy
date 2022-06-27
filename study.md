@@ -550,3 +550,136 @@ for문의 break
 
 자바는 객체를 사용 해야지만 사용 할 수 있는 메서드가 있고 객체 생성을 사용하지 않고
 클래스 네임으로만 사용 할 수 있는 메서드가 있다 
+
+## 람다식
+ 함수형 인터페이스
+
+- 람다식 구현을 위해 함수형 인터페이스를 만들고, 인터페이스에 람다식 메서드를 대입한다.
+- 람다식은 하나의 메서드를 구현하여 인터페이스형 변수에 대입된다.
+- 함수형 인터페이스는 두 개 이상의 메서드를 가질 수 없다.
+
+### @FunctionalInterface 애노테이션
+
+- 실수로 메서드를 하나 이상 선언하면 오류가 나도록 한다.
+- 함수형 인터페이스를 명시적으로 표현한다.
+- 애노테이션을 생략해도 된다.
+
+package lambda;
+```
+@FunctionalInterface
+public interface MyNumber {
+
+    int getMax(int num1, int num2);
+
+    int getAdd(int num1, int num2);
+
+}
+```
+
+### 매개변수가 있는 함수
+
+익명함수를 지칭하는 용어.
+
+- 함수 생성의 단축형
+- 여러 줄의 코드를 가질 수 있다.
+
+//리턴이 없는 경우
+```
+(매개변수)->{중괄호 실행};
+```
+
+```java
+// 매개변수가 여러개인 경우
+(매개변수1, 매개변수2) -> {
+  //로직
+  return ..;
+}
+
+----------------------------------------------------------------
+// 매개변수가 1개 & return 값만 있는 경우
+매개변수 -> ""
+```
+
+매개변수로서 함수
+>
+```
+private static void printBasic(List<String> list) {
+        for (String string : list) {
+            System.out.println(string);
+        }
+    }
+```
+```
+private static void printWithFP(List<String> list) {
+        list.stream().forEach( 
+                element -> System.out.println(element) // 람다식
+        );
+    }
+```
+위 두 메소드는 같은 결과를 도출한다.
+- stream은 값의 흐름(list 안의 원소들)
+- foreach는 stream에서 데이터가 아닌 흐름의 각 요소마다 실행될 함수를 보내는 것
+- () -> => 람다식 (불필요한 코드를 줄이고, 가독성을 높임)
+- element에 list안의 원소들이 들어가고 System.out.println(element)에서 시행
+
+클래스 멤버와 로컬 변수 사용
+람다식 실행블록에는 클래스 멤버와 로컬 변수를 사용할 수 있다.
+클래스의 멤버 사용
+일반적으로 익명객체에 사용되는 this는 익명객체의 참조이지만, 람다식에서 this는 내부적으로 생성되는 익명 객체의 참조가 아니라 람다식을 실행한 객체의 참조이다.
+this 사용 예제
+```
+public class UsingThis {
+    public int outterValue = 10;
+
+    class Inner{
+        int innerValue = 20;
+
+        void method(){
+            MyFunctionalInterface fi = () -> {
+                int innerValue = 40;
+                System.out.println("outterValue : " + outterValue);
+                System.out.println("outterValue : " + UsingThis.this.outterValue + "\n");
+
+                System.out.println("innerValue : " + innerValue);
+                System.out.println("innerValue : " + this.innerValue + "\n"); // 람다식 내부에서 this는 Inner 객체를 참조
+            };
+            fi.method();
+        }
+    }
+}public class UsingThisExample {
+    public static void main(String[] args) {
+        UsingThis usingThis = new UsingThis();
+        UsingThis.Inner inner = usingThis.new Inner();
+        inner.method();
+    }
+}
+```
+outterValue : 10
+outterValue : 10
+innerValue : 40
+innerValue : 20
+
+로컬 변수 사용
+람다식에서 바깥 클래스의 필드나 메소드는 제한 없이 사용할 수 있으나, 메소드의 매개 변수 또는 로컬 변수를 사용하면 이 두 변수는 final 특성을 가져야 한다. 따라서 매개 변수 또는 로컬 변수를 람다식에서 읽는 것은 허용되지만, 람다식 내부 또는 외부에서 변경할 수 없다.
+```
+public class UsingLocalVariable {
+    void method(int arg){
+        int localVar = 40;
+
+        MyFunctionalInterface fi = () -> {
+            // 로컬 변수 읽기
+            System.out.println("arg : " + arg);
+            System.out.println("localVar : " + localVar + "\n");
+            // localVar = localVar + 1; // 불가
+        };
+
+        fi.method();
+    }
+}public class UsingLocalVariableExample {
+    public static void main(String[] args) {
+        UsingLocalVariable ulv = new UsingLocalVariable();
+        ulv.method(20);
+    }
+}
+```
+출처: https://cornswrold.tistory.com/237 [평범한개발자노트:티스토리]
