@@ -683,3 +683,185 @@ public class UsingLocalVariable {
 }
 ```
 출처: https://cornswrold.tistory.com/237 [평범한개발자노트:티스토리]
+
+## Set Collection
+### Set의 특징
+- 값의 저장 순서가 없다
+- 값의 중복 저장이 허용되지 않는다
+- 즉 **집합**을 생각하면 될거 같다
+
+### HashSet<E> 클래스
+```
+package com.test03;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class MTest01 {
+	
+	// Set : 순서X, 중복X
+	public static void main(String[] args) {
+		Set<String> set = new HashSet<String>();
+		
+		set.add("1");
+		set.add("3");
+		set.add("5");
+		set.add("2");
+		set.add("4");
+		set.add("6");
+		set.add("7");
+		//set.add(null);
+		set.add("3"); // 중복이 없기때문에 3이 하나만 나옴
+		
+		for ( String s : set) {
+			System.out.print(s + " ");		// 출력된게 정렬된것처럼 보이지만 정렬된게 아니라 set이 자기 편한대로 가지고 나온값임 null값도 들어가짐
+		}
+		System.out.println();
+		
+		findElement(set, "3");
+		deleteElement(set, "3");
+	}
+	
+	
+	
+	public static void findElement(Set<String> set, String find) {
+		/*
+		for(int i = 0; i < set.size(); i++) {
+			set.get(i);
+		}
+		set은 순서가 없어서 가지고 올수가 없다.
+		*/
+		for(String s : set) {
+			if(s.equals(find)) {
+				System.out.println(find + " 찾았다!!");
+			}
+		}// null값이 들어가 있으면 NPE 오류 -> 아무것도 없는데(null 인데) 어떻게 비교를 하냐 하고 오류내는것임 / 즉, null값 저장은 가능하지만 사용하려고 하면 NullPointerException
+	}
+	
+	
+	
+	public static void deleteElement(Set<String>set, String delete) {
+		for(String s : set) {
+			if(s.equals(delete)) {
+				if(set.remove(s)) {
+					System.out.println(delete + " 지웠다!");
+					break;		//브레이크가 없으면 3은 중간에 지웠는데 지운 값을 출력시키려니까 에러(예외)가 발생함 이런 예외가 발생하기전에 브레이크를 사용하여 나오면 에러 안남 / Exception in thread "main" java.util.ConcurrentModificationException에러
+				}
+			}
+		}
+	}
+	
+}
+```
+
+출처: https://12716.tistory.com/entry/Java-Set-Collection셋-컬렉션 [공부하는 개발자 강씨네:티스토리]
+
+### 해쉬 함수
+해시는 데이터를 다루는 기법 중의 하나로, 검색과 저장을 아주 빠르게하는 자료구조이다.
+데이터를 저장할 때 Key-Value형태로 데이터가 존재하고, Key값이 배열의 **인덱스로 저장**되기 때문에 검색과 저장이 빠르게 일어난다
+
+![img](./image/hashing.png)
+
+- 위의 그림과 같이 해시 함수에서 Key값을 hash로 변환하는 과정을 해싱(hashing)이라고 한다. 
+- 해시 함수는 Key값을 고정된 길이의 hash로 변환하는 역할을 한다.
+- 해시 함수에서는 Key값을 해싱 과정을 통해 해시 값(hash value) 또는 해시코드(hash code)으로 변경하며, 이 해시 값이 저장 위치가 된다고 생각하면 된다.
+- 위와 같은 과정을 거치면 해쉬 테이블 형태의 자료구조를 형성 할 수 있다
+
+### 해쉬 테이블
+
+![img](./image/hashTable.png)
+
+해쉬테이블 구조의 장단점
+#### 장점
+- 중복을 제거할 수 있다.
+- 데이터 캐싱, 보안에 주로 사용된다.
+- 배열의 인덱스로 접근하기 때문에 삽입, 삭제 등의 연산이 빠르다.
+
+#### 단점
+- 공간 복잡도가 커진다.
+- 충돌이 발생할 수 있다.
+- 충돌이 발생할 경우 시간 복잡도는 O(n)에 가까워진다.
+- 순서가 있는 배열에는 어울리지 않는다.
+
+### TreeSet<E> 클래스
+TreeSet 클래스는 데이터가 정렬된 상태로 저장되는 이진 검색 트리(binary search tree)의 형태로 요소를 저장.
+
+```
+TreeSet<Integer> ts = new TreeSet<Integer>();
+
+ 
+
+// add() 메소드를 이용한 요소의 저장
+
+ts.add(30);
+
+ts.add(40);
+
+ts.add(20);
+
+ts.add(10);
+
+ 
+
+// Enhanced for 문과 get() 메소드를 이용한 요소의 출력
+
+for (int e : ts) {
+
+    System.out.print(e + " ");
+
+}
+
+ 
+
+// remove() 메소드를 이용한 요소의 제거
+
+ts.remove(40);
+
+ 
+
+// iterator() 메소드를 이용한 요소의 출력
+
+Iterator<Integer> iter = ts.iterator();
+
+while (iter.hasNext()) {
+
+    System.out.print(iter.next() + " ");
+
+}
+
+ 
+
+// size() 메소드를 이용한 요소의 총 개수
+
+System.out.println("이진 검색 트리의 크기 : " + ts.size());
+
+ 
+
+// subSet() 메소드를 이용한 부분 집합의 출력
+
+① System.out.println(ts.subSet(10, 20));
+
+② System.out.println(ts.subSet(10, true, 20, true));
+```
+#### 실행결과
+10 20 30 40 
+
+10 20 30 
+
+이진 검색 트리의 크기 : 3
+
+[10]
+
+[10, 20]
+
+### Set 인터페이스 메소드
+
+- boolean add(E e) =>	해당 집합(set)에 전달된 요소를 추가함. (선택적 기능)
+- void clear() =>	해당 집합의 모든 요소를 제거함. (선택적 기능)
+- boolean contains(Object o) =>	해당 집합이 전달된 객체를 포함하고 있는지를 확인함.
+- boolean equals(Object o) =>	해당 집합과 전달된 객체가 같은지를 확인함.
+- boolean isEmpty() =>	해당 집합이 비어있는지를 확인함.
+- Iterator<E> iterator() =>	해당 집합의 반복자(iterator)를 반환함.
+- boolean remove(Object o) =>	해당 집합에서 전달된 객체를 제거함. (선택적 기능)
+- int size() =>	해당 집합의 요소의 총 개수를 반환함.
+- Object[] toArray() =>	해당 집합의 모든 요소를 Object 타입의 배열로 반환함.
